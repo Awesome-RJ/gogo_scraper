@@ -32,7 +32,7 @@ def getLatestEpisode(anime, base_url=BASE_URL):
     :return: Link and episode number of latest episode, or None if anime or episode was not found
     """
     anime = _validifyName_(anime)
-    newUrl = base_url + "category/" + anime
+    newUrl = f'{base_url}category/{anime}'
 
     page_response = requests.get(newUrl)
     page = BeautifulSoup(page_response.content, "html.parser")
@@ -74,10 +74,7 @@ def getEpisode(anime, re_ep, base_url=BASE_URL):
     except:
         return episodeUrl
 
-    if text == '404':
-        return None
-    else:
-        return episodeUrl
+    return None if text == '404' else episodeUrl
 
 
 def search(anime, base_url=BASE_URL):
@@ -91,7 +88,7 @@ def search(anime, base_url=BASE_URL):
     """
 
     anime = _validifyName_(anime)
-    searchUrl = base_url + '/search.html?keyword=' + anime
+    searchUrl = f'{base_url}/search.html?keyword={anime}'
 
     page_response = requests.get(searchUrl)
     page = BeautifulSoup(page_response.content, "html.parser")
@@ -100,8 +97,7 @@ def search(anime, base_url=BASE_URL):
     res = []
 
     for item in items:
-        info = {}
-        info['name'] = item.find('p', class_='name').find('a').text
+        info = {'name': item.find('p', class_='name').find('a').text}
         info['link'] = base_url + item.find('p', class_='name').find('a').get('href')
         info['released'] = item.find('p', class_='released').text.strip()
         info['gogoTitle'] = info['link'][info['link'].find('category') + 9:]
